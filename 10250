@@ -1,0 +1,23 @@
+#include <cstdio>
+using namespace std;
+
+int H, W, N;
+void makeRoomNumber(int floor, int number) {
+	if (floor == 0) {
+		number -= 1;
+		floor = H;
+	}
+	printf("%d\n", floor * 100 + number);
+}
+
+int main() {
+	int TC;
+	scanf("%d", &TC);
+
+	while (TC--) {
+		int q, r;
+		scanf("%d %d %d", &H, &W, &N);
+		makeRoomNumber(N % H, (N / H) + 1);
+	}
+	return 0;
+}
