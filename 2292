@@ -1,0 +1,21 @@
+/*
+ 각 원 중에서 마지막 숫자들을 나열하면 1, 7, 19, 37, 61 이고
+이웃한 숫자들의 차는 6의 배수인 걸 확인 할 수 있다.
+계차 수열 공식 
+[참고] http://terms.naver.com/entry.nhn?docId=3350261&cid=58247&categoryId=58247
+을 적용하면 3n^2-3n+1이라는 식이 나오게 된다.
+위 식을 적용해서 나온 값이 입력받은 n보다 클 때까지 반복하여 답을 구하였다.
+*/
+#include <cstdio>
+
+int main() {
+	int n, i;
+	scanf("%d", &n);
+	int val = 1;
+	int dis = 1;
+	for (i = 2; val < n; i++,dis++) {
+		val = 3 * (i * i) - 3 * i + 1;
+	}
+	printf("%d\n", dis);
+	return 0;
+}
