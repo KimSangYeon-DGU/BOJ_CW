@@ -1,0 +1,24 @@
+/*
+math.h 라이브러리에 pow라는 함수가 있지만 이걸 사용하면
+맥시멈값 99^999999을 계산하기가 까다로워 진다.
+따라서 크기를 줄이기 위해 하나씩 곱해갈때, 
+단계마다 X(구하고자 하는 값) % 10을 진행하여 답을 도출하였다.
+*/
+
+#include <cstdio>
+#include <cmath>
+typedef long long ll;
+int main() {
+	int TC, x, y, mod = 10;
+	scanf("%d", &TC);
+	while (TC--) {
+		scanf("%d %d", &x, &y);
+		ll tmp = 1;
+		for (int i = 1; i <= y; i++) {
+			tmp = (tmp * x) % mod;
+			if (!tmp) tmp = mod;
+		}
+		printf("%lld\n", tmp);
+	}
+	return 0;
+}
