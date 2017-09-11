@@ -1,0 +1,68 @@
+/*
+overflow가 나기 때문에 int형 대신 long long을 사용해서 해결하였다.
+*/
+
+#include <cstdio>
+#include <cstring>
+#define MAX_S 51
+#define MOD 1000000007
+typedef long long ll;
+ll A[MAX_S][MAX_S];
+ll B[MAX_S][MAX_S];
+ll C[MAX_S][MAX_S];
+int N, K, i, j, k;
+int cur_X, cur_Y, new_X, new_Y;
+bool process() {
+	ll sum;
+	if (cur_Y == new_X) {
+		for (i = 1; i <= cur_X; i++) {
+			for (j = 1; j <= new_Y; j++) {
+				sum = 0;
+				for (k = 1; k <= cur_Y; k++) {
+					sum += (A[i][k] * B[k][j]) % MOD;
+				}
+				C[i][j] = sum;
+			}
+		}
+	}
+	else
+		return false;
+	cur_Y = new_Y;
+	for (i = 1; i <= cur_X; i++) {
+		for (j = 1; j <= cur_Y; j++) {
+			A[i][j] = C[i][j];
+		}
+	}
+
+	return true;
+}
+int main() {
+	ll ret = 0;
+	scanf("%d", &N);
+	scanf("%d %d", &cur_X, &cur_Y);
+	for (i = 1; i <= cur_X; i++) {
+		for (j = 1; j <= cur_Y; j++) {
+			scanf("%d", &A[i][j]);
+		}
+	}
+	N--;
+	while (N--) {
+		scanf("%d %d", &new_X, &new_Y);
+		for (i = 1; i <= new_X; i++) {
+			for (j = 1; j <= new_Y; j++) {
+				scanf("%d", &B[i][j]);
+			}
+		}
+		if (!process()) {
+			printf("-1\n");
+			return 0;
+		}
+	}
+	for (i = 1; i <= cur_X; i++) {
+		for (j = 1; j <= cur_Y; j++) {
+			ret = (ret + A[i][j]) % MOD;
+		}
+	}
+	printf("%lld\n", ret);
+	return 0;
+}
