@@ -1,0 +1,154 @@
+/*
+1. 각 섬에 번호를 부여
+2. 가장 짧은 다리를 BFS로 탐색
+*/
+
+#include <cstdio>
+#include <cstring>
+#include <queue>
+#define MAX_S 101
+using namespace std;
+
+typedef struct island {
+	int num;
+	int dis;
+}Island;
+
+Island island[MAX_S][MAX_S];
+int map[MAX_S][MAX_S];
+bool visited[MAX_S][MAX_S];
+//int tDis[MAX_S][MAX_S];
+
+int N, cnt = 0;
+int dx[4] = {-1, 0, 1, 0};
+int dy[4] = {0, -1, 0, 1};
+int min_Dis = 2000000000;
+
+bool isOkay(int x, int y) {
+	if (x < 1 || x > N || y < 1 || y > N)
+		return false;
+	if (visited[x][y] == true || map[x][y] == 0)
+		return false;
+	return true;
+}
+
+void setIslandNumber(int u, int v) {
+	queue<pair<int, int>> q;
+	q.push(make_pair(u, v));
+	int cur_X, cur_Y, new_X, new_Y;
+	visited[u][v] = true;
+	//Numbering
+	island[u][v].num = cnt;
+	while (!q.empty()) {
+		cur_X = q.front().first;
+		cur_Y = q.front().second;
+		q.pop();
+		for (int i = 0; i < 4; i++) {
+			new_X = cur_X + dx[i];
+			new_Y = cur_Y + dy[i];
+			if (isOkay(new_X, new_Y)) {
+				q.push(make_pair(new_X, new_Y));
+				island[new_X][new_Y].num = cnt;
+				visited[new_X][new_Y] = true;
+			}
+		}
+	}
+}
+
+//다리 놓는 것이 가능한 지 체크하는 함수
+bool isPossible(int x, int y) {
+	if (x < 1 || x > N || y < 1 || y >N)
+		return false;
+	if (visited[x][y] == true || map[x][y] != 0)
+		return false;
+	return true;
+}
+
+bool isRangeIn(int x, int y) {
+	if (x < 1 || x > N || y < 1 || y>N)
+		return false;
+	return true;
+}
+
+void layBridge(int u, int v) {
+	queue<pair<int, int>> q;
+	q.push(make_pair(u, v));
+	int cur_X, cur_Y, new_X, new_Y;
+	visited[u][v] = true;
+	island[u][v].dis = 0;
+	while (!q.empty()) {
+		cur_X = q.front().first;
+		cur_Y = q.front().second;
+		q.pop();
+		for (int i = 0; i < 4; i++) {
+			new_X = cur_X + dx[i];
+			new_Y = cur_Y + dy[i];
+			if (isPossible(new_X, new_Y) && island[cur_X][cur_Y].num == island[new_X][new_Y].num) {
+				q.push(make_pair(new_X, new_Y));
+				island[new_X][new_Y].dis = island[cur_X][cur_Y].dis + 1;
+				visited[new_X][new_Y] = true;
+				/*
+				디버깅
+				for (int a = 1; a <= N; a++) {
+					for (int b = 1; b <= N; b++) {
+						tDis[a][b] = island[a][b].dis;
+					}
+				}
+				*/
+			}
+			else if(isRangeIn(new_X, new_Y) && map[new_X][new_Y] != 0 && island[cur_X][cur_Y].num != island[new_X][new_Y].num){
+				if (island[cur_X][cur_Y].dis < min_Dis) {
+					min_Dis = island[cur_X][cur_Y].dis;
+				}
+				return;
+			}
+		}
+	}
+}
+
+//초기화 함수
+void init(int num) {
+	int i, j;
+	for (i = 1; i <= N; i++) {
+		for (j = 1; j <= N; j++) {
+			island[i][j].dis = 0;
+			if(!map[i][j])
+				island[i][j].num = num;
+		}
+	}
+}
+
+int main() {
+	int i, j;
+	scanf("%d", &N);
+	for (i = 1; i <= N; i++) {
+		for (j = 1; j <= N; j++) {
+			scanf("%d", &map[i][j]);
+			island[i][j].num = 1;
+		}
+	}
+
+	//Island Numbering
+	for (i = 1; i <= N; i++) {
+		for (j = 1; j <= N; j++) {
+			if (visited[i][j] == false && map[i][j] != 0) {
+				cnt++;
+				setIslandNumber(i, j);
+			}
+		}
+	}
+	memset(visited, false, sizeof visited);
+
+	//다리 놓기
+	for (i = 1; i <= N; i++) {
+		for (j = 1; j <= N; j++) {
+			if (visited[i][j] == false && map[i][j] != 0) {
+				init(island[i][j].num);
+				layBridge(i, j);
+				memset(visited, false, sizeof visited);
+			}
+		}
+	}
+	printf("%d\n", min_Dis);
+	return 0;
+}
