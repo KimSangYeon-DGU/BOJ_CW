@@ -1,0 +1,33 @@
+/*
+하나씩 검사하면 O(n^2)이 나오기 때문에 이를 피하기 위해
+memoization 기법을 사용하였다.
+*/
+
+#include <cstdio>
+#define MAX_S 500001
+
+int num[MAX_S];
+int ret[MAX_S];
+int main() {
+	int N, i, j, cur_Num;
+	scanf("%d", &N);
+	for (i = 1; i <= N; i++) {
+		scanf("%d", &num[i]);
+		cur_Num = num[i];
+		if (i == 1) { ret[i] = 0;  continue; }
+		j = i - 1;
+		while (true) {
+			if (!j || num[j] - cur_Num >= 0) {
+				ret[i] = j;
+				break;
+			}
+			else 
+				j = ret[j];
+		}
+	}
+	for (i = 1; i <= N; i++) {
+		printf("%d ", ret[i]);
+	}
+	printf("\n");
+	return 0;
+}
