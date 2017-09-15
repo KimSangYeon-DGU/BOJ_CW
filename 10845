@@ -1,0 +1,96 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#define MAX_S 10001
+using namespace std;
+
+int mem[MAX_S];
+int idx = 0;
+void push_Q(int n) {
+	mem[++idx] = n;
+}
+int front_Q() {
+	if (mem[1]) {
+		return mem[1];
+	}
+	else
+		return -1;
+}
+
+int back_Q() {
+	if (mem[idx]) {
+		return mem[idx];
+	}
+	else
+		return -1;
+}
+
+bool empty_Q(){
+	if (idx == 0)
+		return true;
+	else
+		return false;
+}
+
+int size_Q() {
+	return idx;
+}
+
+int pop_Q() {
+	int tmp, i = 1;
+	if (!empty_Q()) {
+		tmp = mem[1];
+		if (idx != 1) {
+			for (i = 2; i <= idx; i++) {
+				mem[i - 1] = mem[i];
+			}
+		}
+		mem[i] = 0;
+		idx--;
+		return tmp;
+	}
+	else
+		return -1;
+}
+
+bool check(string _instr) {
+	int len = _instr.size();
+	string tmp = "";
+	int num = 0;
+	if (_instr[0] == 'p' && _instr[1] == 'u' && _instr[2] == 's' && _instr[3] == 'h') {
+		return true;
+	}
+	return false;
+}
+int main() {
+	int N, i, value;
+	bool isPush;
+	string instr;
+	cin >> N;
+	for (i = 0; i < N; i++) {
+		cin >> instr;
+		isPush = check(instr);
+		if (isPush) {
+			cin >> value;
+			push_Q(value);
+		}
+		else {
+			if (instr == "front") {
+				cout << front_Q() << endl;
+			}
+			else if (instr == "back") {
+				cout << back_Q() << endl;
+			}
+			else if (instr == "empty") {
+				cout << empty_Q() << endl;
+			}
+			else if (instr == "pop") {
+				cout << pop_Q() << endl;
+			}
+			else if (instr == "size") {
+				cout << size_Q() << endl;
+			}
+		}
+	}
+	return 0;
+}
