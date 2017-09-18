@@ -1,0 +1,56 @@
+#include <cstdio>
+#include <queue>
+#define MAX_S 101
+using namespace std;
+
+int map[MAX_S][MAX_S];
+int number[MAX_S];
+int parent[MAX_S];
+bool visited[MAX_S];
+int N, a, b;
+void setNumber(int n, int num) {
+	if (!number[n])
+		number[n] = num;
+}
+void makeEdge(int n, int m) {
+	map[n][m] = 1;
+	map[m][n] = 1;
+	parent[m] = n;
+}
+void bfs(int n) {
+	queue<pair<int, int>> q;
+	q.push(make_pair(n, 0));
+	visited[n] = true;
+	int u, i, cur_Number = 0;
+	while (!q.empty()) {
+		u = q.front().first;
+		cur_Number = q.front().second + 1;
+		q.pop();
+		for (i = 1; i <= N; i++) {
+			if (visited[i] == false && map[u][i] == 1) {
+				number[i] = cur_Number;
+				q.push(make_pair(i, cur_Number));
+				visited[i] = true;
+			}
+		}
+	}
+}
+int main() {
+	int m, x, y;
+	int i, j, ret;
+	scanf("%d", &N);
+	scanf("%d %d", &a, &b);
+	scanf("%d", &m);
+	for (i = 0; i < m; i++) {
+		scanf("%d %d", &x, &y);
+		makeEdge(x, y);
+	}
+	bfs(a);
+	if (!number[b])
+		ret = -1;
+	else
+		ret = number[b];
+
+	printf("%d\n", ret);
+	return 0;
+}
