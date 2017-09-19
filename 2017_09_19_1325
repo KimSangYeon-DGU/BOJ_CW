@@ -1,0 +1,54 @@
+#include <cstdio>
+#include <cstring>
+#include <queue>
+#include <vector>
+#define MAX_S 10001
+using namespace std;
+
+int map[MAX_S][MAX_S];
+bool visited[MAX_S];
+int N, M;
+void makeEdge(int a, int b) {
+	map[b][a] = 1;
+}
+int bfs(int u) {
+	int cnt = 0;
+	queue<int> q;
+	q.push(u);
+	int v, i;
+	while (!q.empty()) {
+		v = q.front();
+		q.pop();
+		for (i = 1; i <= N; i++) {
+			if (visited[i] == false && map[v][i] == 1) {
+				visited[i] = true;
+				q.push(i);
+				cnt++;
+			}
+		}
+	}
+	return cnt;
+}
+int main() {
+	int i, j, a, b, max_Cnt = -1, cur_Cnt;
+	vector<int> v;
+	scanf("%d %d", &N, &M);
+	for (i = 1; i <= M; i++) {
+		scanf("%d %d", &a, &b);
+		makeEdge(a, b);
+	}
+	for (i = 1; i <= N; i++) {
+		cur_Cnt = bfs(i);
+		memset(visited, false, sizeof visited);
+		if (cur_Cnt >= max_Cnt) {
+			max_Cnt = cur_Cnt;
+			v.push_back(i);
+		}
+	}
+	int len = v.size();
+	for (i = 0; i < len; i++) {
+		printf("%d ", v.at(i));
+	}
+	printf("\n");
+	return 0;
+}
