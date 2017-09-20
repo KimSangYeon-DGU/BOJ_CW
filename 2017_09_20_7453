@@ -1,0 +1,51 @@
+/*
+A, B, C, D 4개의 배열을
+각각 2개씩 합쳐 X, Y를 생성
+Y를 정렬하여 X와 반대 부호의 값의 
+lower bound와 upper bound를 찾고 그 인덱스를 구하였다.
+이 인덱스의 차이가 곧 찾고자 하는 '0'을 만드는 요소의 개수가 되고
+이를 출력하였다.
+*/
+
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+#define MAX_S 4001
+using namespace std;
+typedef long long ll;
+
+int A[MAX_S], B[MAX_S], C[MAX_S], D[MAX_S];
+vector<int> X, Y;
+void merge(int size) {
+	int i, j;
+	for (i = 0; i < size; i++) {
+		for (j = 0; j < size; j++) {
+			X.push_back(A[i] + B[j]);
+			Y.push_back(C[i] + D[j]);
+		}
+	}
+}
+
+int main() {
+	int n, i, j;
+	scanf("%d", &n);
+	for (i = 0; i < n; i++) {
+		scanf("%d %d %d %d", &A[i], &B[i], &C[i], &D[i]);
+	}
+	merge(n);
+	sort(Y.begin(), Y.end());
+	ll cnt = 0;
+	int len = X.size();
+	vector<int>::iterator start, end;
+	int a, b, u, val;
+	for (i = 0; i < len; i++) {
+		val = X[i];
+		start = lower_bound(Y.begin(), Y.end(), -val);
+		end = upper_bound(Y.begin(), Y.end(), -val);
+		a = start - Y.begin();
+		b = end - Y.begin();
+		cnt += (b - a);
+	}
+	printf("%lld\n", cnt);
+	return 0;
+}
