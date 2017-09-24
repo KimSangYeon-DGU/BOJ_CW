@@ -1,0 +1,14 @@
+#include <cstdio>
+
+int main() {
+	int people = 0, max_P = -1;
+	int in, out;
+	for (int i = 0; i < 4; i++) {
+		scanf("%d %d", &out, &in);
+		people = people + in - out;
+		if (max_P < people)
+			max_P = people;
+	}
+	printf("%d\n", max_P);
+	return 0;
+}
