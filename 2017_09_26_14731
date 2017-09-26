@@ -1,0 +1,55 @@
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+#define MAX_V 31
+#define MOD 1000000007
+using namespace std;
+typedef long long ll;
+vector<pair<ll, ll>> v; // The first is exp, the second is value
+
+ll _expn, _val = 1;
+void search(ll e) {
+	int pos = 28;
+	while (pos >= 0) {
+		while (_expn <= e) {
+			if (_expn + v.at(pos).first <= e) {
+				_expn += v.at(pos).first;
+				_val = (_val * v.at(pos).second) % MOD;
+			}
+			else
+				break;
+		}
+		pos--;
+	}
+}
+void find(ll e) {
+	int i;
+	ll intvl = e - _expn;
+	for (i = 0; i < intvl; i++) {
+		_val = (_val * 2) % MOD;
+	}
+}
+
+ll calculate(ll c, ll e) {
+	ll ret = ((c * e) % MOD * _val) % MOD;
+	return ret;
+}
+int main() {
+	ll i, n, coef, expn;
+	ll ret = 0;
+	v.push_back(make_pair(1, 2));
+	for (i = 0; i < 29; i++) {
+		v.push_back(make_pair(v.at(i).first << 1, (v.at(i).second * v.at(i).second) % MOD));
+	}
+	scanf("%lld", &n);
+	for (i = 0; i < n; i++) {
+		_val = 1;
+		_expn = 0;
+		scanf("%lld %lld", &coef, &expn);
+		search(expn - 1);
+		find(expn - 1);
+		ret = (ret + calculate(coef, expn)) % MOD;
+	}
+	printf("%lld\n", ret);
+	return 0;
+}
