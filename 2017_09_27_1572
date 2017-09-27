@@ -1,0 +1,51 @@
+#include <cstdio>
+#define MAX_N 250001
+#define MAX_V 65537
+using namespace std;
+typedef long long ll;
+
+ll tree[4 * MAX_N], input[MAX_N];
+ll build(ll pos, ll node, ll start, ll end) {
+	if (pos < start || pos > end)
+		return tree[node];
+	else if (start == end)
+		return tree[node] += 1;
+	return tree[node] = build(pos, node << 1, start, (start + end) >> 1) + build(pos, (node << 1) + 1, ((start + end) >> 1) + 1, end);
+}
+
+ll update(ll pos, ll val, ll node, ll start, ll end) {
+	if (pos < start || pos > end)
+		return tree[node];
+	else if (start == end)
+		return tree[node] += val;
+	return tree[node] = update(pos, val, node << 1, start, (start + end) >> 1) + update(pos, val, (node << 1) + 1, ((start + end) >> 1) + 1, end);
+}
+
+ll query(ll pos, ll node, ll start, ll end) {
+	if (start == end)
+		return start;
+	if (pos <= tree[node << 1])
+		return query(pos, node << 1, start, (start + end) >> 1);
+	else
+		return query(pos - tree[node << 1], (node << 1) + 1, ((start + end) >> 1) + 1, end);
+}
+
+int main() {
+	ll N, K, i;
+	ll ans = 0;
+	scanf("%lld %lld", &N, &K);
+	for (i = 0; i < N; i++) {	
+		scanf("%lld", &input[i]);
+	}
+	//init
+	for (i = 0; i < K-1; i++) {
+		build(input[i], 1, 0, MAX_V - 1);
+	}
+	for (i = K - 1; i < N; i++) {
+		update(input[i], 1, 1, 0, MAX_V - 1);
+		ans += query((K + 1) / 2, 1, 0, MAX_V - 1);
+		update(input[i - K + 1], -1, 1, 0, MAX_V - 1);
+	}
+	printf("%lld\n", ans);
+	return 0;
+}
