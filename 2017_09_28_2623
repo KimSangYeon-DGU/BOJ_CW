@@ -1,0 +1,64 @@
+/*
+위상정렬을 이용하여 해결
+구현 로직은 indegree가 0인 정점이 향했던 간선을 지우고 그 정점을 
+벡터에 집어 넣었다. 이런식으로 반복해서 모든 간선이 지워지면 답을 출력하고
+brute force를 진행함에도 불구하고 아직 지워지지 않은 간선이 있다는 것은
+해당 케이스는 위상정렬이 불가능함이므로 0을 출력하였다. 
+*/
+#include <cstdio>
+#include <vector>
+#define MAX_S 1001
+using namespace std;
+int in[MAX_S];
+int out[MAX_S][MAX_S];
+bool check[MAX_S];
+void addDegree(int from, int to) {
+	in[to]++;
+	out[from][++out[from][0]] = to;
+}
+
+void deleteDegree(int vertex) {
+	int len = out[vertex][0], i;
+	for (i = 1; i <= len; i++) {
+		if (in[out[vertex][i]] - 1 >= 0) {
+			in[out[vertex][i]]--;
+		}
+	}
+}
+int main() {
+	int N, M, i, m, j;
+	vector<int> v;
+	scanf("%d %d", &N, &M);
+	for (i = 0; i < M; i++) {
+		scanf("%d", &m);
+		int t1, t2;
+		scanf("%d", &t1);
+		for (j = 0; j < m - 1; j++) {
+			scanf("%d", &t2);
+			addDegree(t1, t2);
+			t1 = t2;
+		}
+	}
+	
+	for (i = 1; i <= N; i++) {
+		for (j = 1; j <= N; j++) {
+			if (!in[j] && check[j] == false) {
+				deleteDegree(j);
+				v.push_back(j);
+				check[j] = true;
+			}
+		}
+	}
+	for (i = 1; i <= N; i++) {
+		if (in[i]) {
+			printf("0\n");
+			return 0;
+		}
+	}
+	int len = v.size();
+	for (i = 0; i < len; i++) {
+		printf("%d\n", v[i]);
+	}
+	
+	return 0;
+}
