@@ -1,0 +1,71 @@
+/*
+감기기운이 있어서 지금도 너무 어지럽다.. 
+당일 대회가 있어서 최대한 컨디션을 올리기 위해 쉬고 있었는데
+생각보다 대회문제가 어려워 고전했다.
+그래도 할 일은 하기 위해 문제는 풀었다.
+분할정복으로 풀었고, 매 함수 호출시 시작위치와 사이즈를 넘겨주어
+그 부분만큼 check를 거치고 만약 다른 수가 존재할 시엔 다시 9분할을 진행하도록 하였다.
+*/
+#include <cstdio>
+#define MAX_S 2200
+using namespace std;
+
+int map[MAX_S][MAX_S];
+int N;
+int ret[3];
+bool check(int x, int y, int size) 
+{
+	int i, j;
+	int standard = map[x][y];
+	for (i = x; i <= (x + size - 1); i++) 
+	{
+		for (j = y; j <= (y + size - 1); j++) 
+		{
+			if (standard != map[i][j])
+			{
+				return false;
+			}
+		}
+	}
+	ret[standard + 1]++;
+	return true;
+}
+void process(int x, int y, int size)
+{
+	if (check(x, y, size))
+	{
+		return;
+	}
+	else 
+	{
+		process(x, y, size / 3);
+		process(x, y + (size / 3), size / 3);
+		process(x, y + (size / 3) * 2, size / 3);
+
+		process(x + (size / 3), y, size / 3);
+		process(x + (size / 3), y + (size / 3), size / 3);
+		process(x + (size / 3), y + (size / 3) * 2, size / 3);
+
+		process(x + (size / 3) * 2, y, size / 3);
+		process(x + (size / 3) * 2, y + (size / 3), size / 3);
+		process(x + (size / 3) * 2, y + (size / 3) * 2, size / 3);
+	}
+}
+int main() 
+{
+	int i, j;
+	scanf("%d", &N);
+	for (i = 1; i <= N; i++) 
+	{
+		for (j = 1; j <= N; j++) 
+		{
+			scanf("%d", &map[i][j]);
+		}
+	}
+	process(1, 1, N);
+	for (i = 0; i < 3; i++) 
+	{
+		printf("%d\n", ret[i]);
+	}
+	return 0;
+}
