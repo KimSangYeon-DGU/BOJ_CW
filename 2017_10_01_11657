@@ -1,0 +1,66 @@
+/*
+Bellman Ford Algorithm으로 해결하였다
+*/
+#include <cstdio>
+#include <cstring>
+#include <vector>
+#define INF 2e9
+#define MAX_S 501
+using namespace std;
+int dis[MAX_S];
+int p[MAX_S];
+typedef struct Path {
+	int u;
+	int v;
+}Path;
+int main() {
+	int N, M, i, loop;
+	scanf("%d %d", &N, &M);
+	for (i = 2; i <= N; i++) {
+		dis[i] = INF;
+	}
+	vector<pair<Path, int>> v(M);
+	for (i = 0; i < M; i++) {
+		scanf("%d %d %d", &v[i].first.u, &v[i].first.v, &v[i].second);
+	}
+	loop = N - 1;
+	int len = v.size();
+	bool update;
+	while (loop--) {
+		update = false;
+		for (i = 0; i < len; i++) {
+			if (dis[v[i].first.u] + v[i].second < dis[v[i].first.v]) {
+				dis[v[i].first.v] = dis[v[i].first.u] + v[i].second;
+				p[v[i].first.v] = v[i].first.u;
+				update = true;
+			}
+		}
+		if (update == false)
+			break;
+	}
+	if (update == true) {
+		loop = 1;
+		while (loop--) {
+			update = false;
+			for (i = 0; i < len; i++) {
+				if (dis[v[i].first.u] + v[i].second < dis[v[i].first.v]) {
+					dis[v[i].first.v] = dis[v[i].first.u] + v[i].second;
+					p[v[i].first.v] = v[i].first.u;
+					update = true;
+				}
+			}
+		}
+	}
+	if (update == true) {
+		printf("-1\n");
+	}
+	else {
+		for (i = 2; i <= N; i++) {
+			if (dis[i] != INF)
+				printf("%d\n", dis[i]);
+			else
+				printf("-1\n");
+		}
+	}
+	return 0;
+}
