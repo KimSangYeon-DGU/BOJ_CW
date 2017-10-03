@@ -1,0 +1,55 @@
+#include <cstdio>
+#include <string>
+#include <iostream>
+#define MAX_S 21
+using namespace std;
+
+bool alpha[26];
+char map[MAX_S][MAX_S];
+int dx[4] = {-1, 0, 1, 0};
+int dy[4] = { 0, -1, 0, 1 };
+int max_Cnt, R, C;
+void setMap(string s, int R) {
+	int len = s.size(), i;
+	for (i = 0; i < len; i++) {
+		map[R][i] = s[i];
+	}
+}
+
+bool isOkay(int x, int y) {
+	if (x < 0 || x > R - 1 || y < 0 || y > C - 1)
+		return false;
+	if (!('A' <= map[x][y] && map[x][y] <= 'Z') || (alpha[map[x][y] - 'A'] == true))
+		return false;
+	return true;
+}
+
+void dfs(int u, int v, int weight) {
+	int i, cur_X, cur_Y, new_X, new_Y, ret;
+	cur_X = u;
+	cur_Y = v;
+	if (weight > max_Cnt) {
+		max_Cnt = weight;
+	}
+	alpha[map[cur_X][cur_Y] - 'A'] = true;
+	for (i = 0; i < 4; i++) {
+		new_X = cur_X + dx[i];
+		new_Y = cur_Y + dy[i];
+		if (isOkay(new_X, new_Y)) {
+			dfs(new_X, new_Y, weight + 1);
+		}
+	}
+	alpha[map[cur_X][cur_Y] - 'A'] = false;
+}
+int main() {
+	int i, j;
+	string str;
+	scanf("%d %d", &R, &C);
+	for (i = 0; i < R; i++) {
+		cin >> str;
+		setMap(str, i);
+	}
+	dfs(0, 0, 1);
+	printf("%d\n", max_Cnt);
+	return 0;
+}
