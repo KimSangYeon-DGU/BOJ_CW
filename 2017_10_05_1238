@@ -1,0 +1,71 @@
+/*
+다익스트라를 2번 이용하였는데, 첫번째는 순방향 최단 경로를 구했고
+두번째는 역방향 최단 경로를 구했다.
+역방향 최단경로를 구한 이유는 간단하다.
+방향 그래프에서 A에서 B를 왕복하기 위한 방법은 
+A와 B에서 각각의 다익스트라를 이용해서 찾는 방법과
+역방향으로 구하는 방법이 있다.
+역방향으로는 예를들어  
+A, B, 4
+B, A, 2
+(시작, 도착, 가중치)
+가 주어졌다고 하자. 
+데이터가 단순하므로 우리는 답을 '6'이라 내릴 수 있다.
+A에서 dijkstra algorithm을 사용하면 A = 0, B = 4라는 값이 나오고
+역방향으로 간선을 바꾼 뒤 A에서 dijkstra를 사용하면 A = 0, B = 2라는 값이 나온다.
+즉 이것은 A에서 B까지 가는 데 최단 경로로 4가 걸리고 B에서 A까지 가는데 최단 경로로 2임을 의미하며
+(정방향일때 B가 A에서 이동할 수 있는 방향과 가중치는 역방향일때 A가 B로 이동할 수 있는 방향과 가중치와 같기 때문이다)
+4+2 = 6이 바로 A에서 B를 왕복하는데 걸리는 최대시간이 되는 것이다.
+*/
+#include <cstdio>
+#include <queue>
+#include <algorithm>
+#include <functional>
+#define INF 2e9
+#define MAX_S 1001
+using namespace std;
+typedef pair<int, int> pii;
+typedef vector<int> vi;
+typedef vector<pii> vii;
+typedef vector<vector<pii>> vvii;
+
+void dijkstra(vi &dist, vvii &adj, int src) {
+	priority_queue<pii, vii, greater<pii>> pq;
+	pq.push(make_pair(0, src));
+	while (!pq.empty()) {
+		int cost = pq.top().first;
+		int cur = pq.top().second;
+		pq.pop();
+		if (dist[cur] < cost)
+			continue;
+		for (auto &i : adj[cur]) {
+			if (dist[i.first] > cost + i.second) {
+				dist[i.first] = cost + i.second;
+				pq.push(make_pair(cost + i.second, i.first));
+			}
+		}
+	}
+}
+
+int main() {
+	int N, M, X, i, u, v, w;
+	vi dist(MAX_S, INF), reverse_dist(MAX_S, INF);
+	vvii adj(MAX_S), reverse_adj(MAX_S);
+	scanf("%d %d %d", &N, &M, &X);
+	for (i = 0; i < M; i++) {
+		scanf("%d %d %d", &u, &v, &w);
+		adj[u].push_back(make_pair(v, w));
+		reverse_adj[v].push_back(make_pair(u, w)); 
+	}
+	dijkstra(dist, adj, X);
+	dijkstra(reverse_dist, reverse_adj, X);
+	int ret = -1;
+	for (i = 1; i <= N; i++) {
+		if (i == X)
+			continue;
+		if (ret < dist[i] + reverse_dist[i])
+			ret = dist[i] + reverse_dist[i];
+	}
+	printf("%d\n", ret);
+	return 0;
+}
