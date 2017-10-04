@@ -1,0 +1,45 @@
+/*
+다익스트라 알고리즘 사용
+*/
+#include <cstdio>
+#include <algorithm>
+#include <functional>
+#include <queue>
+#define MAX_V 1001
+#define INF 2e9
+using namespace std;
+typedef pair<int, int> pii;
+typedef vector<vector<pii>> vvii;
+
+vvii adj(MAX_V);
+vector<int> dist(MAX_V, INF);
+void dijkstra(int src) {
+	priority_queue<pii, vector<pii>, greater<pii>> pq;
+	pq.push(make_pair(0, src));
+	while (!pq.empty()) {
+		int cost = pq.top().first;
+		int cur = pq.top().second;
+		pq.pop();
+		if (dist[cur] < cost)
+			continue;
+		for (auto &i : adj[cur]) {
+			if (dist[i.first] > cost + i.second) {
+				dist[i.first] = cost + i.second;
+				pq.push(make_pair(cost + i.second, i.first));
+			}
+		}
+	}
+}
+int main() {
+	int n, m, i, u, v, w;
+	int src, dest;
+	scanf("%d %d", &n, &m);
+	for (i = 0; i < m; i++) {
+		scanf("%d %d %d", &u, &v, &w);
+		adj[u].push_back(make_pair(v, w));
+	}
+	scanf("%d %d", &src, &dest);
+	dijkstra(src);
+	printf("%d\n", dist[dest]);
+	return 0;
+}
