@@ -1,0 +1,53 @@
+/*
+다익스트라 알고리즘 사용
+*/
+#include <cstdio>
+#include <queue>
+#include <algorithm>
+#include <functional>
+#define MAX_V 20001
+#define MAX_E 300001
+#define INF 2e9
+using namespace std;
+typedef pair<int, int> pii;
+typedef vector<vector<pii>> vvii;
+
+vvii adj(MAX_V);
+vector<int> dijkstra(int V, int E, int src, vvii adj) {
+	priority_queue<pii, vector<pii>, greater<pii>> pq;
+	vector<int> dist(MAX_V, INF);
+	dist[src] = 0;
+	pq.push(make_pair(0, src));
+	while (!pq.empty()) {
+		int cost = pq.top().first;
+		int cur = pq.top().second;
+		pq.pop();
+		if (dist[cur] < cost)
+			continue;
+		for (auto &i : adj[cur]) {
+			if (dist[i.first] > cost + i.second) {
+				dist[i.first] = cost + i.second;
+				pq.push(make_pair(cost + i.second, i.first));
+			}
+		}
+	}
+	return dist;
+}
+
+int main() {
+	int V, E, src, i, u, v, w;
+	scanf("%d %d %d", &V, &E, &src);
+	for (i = 0; i < E; i++) {
+		scanf("%d %d %d", &u, &v, &w);
+		adj[u].push_back(make_pair(v, w));
+	}
+	vector<int> ret;
+	ret = dijkstra(V, E, src, adj);
+	for (i = 1; i <= V; i++) {
+		if (ret[i] == INF)
+			printf("INF\n");
+		else
+			printf("%d\n", ret[i]);
+	}
+	return 0;
+}
