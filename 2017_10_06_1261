@@ -1,0 +1,60 @@
+#include <cstdio>
+#include <cstring>
+#include <queue>
+#include <iostream>
+#include <string>
+#include <functional>
+#define INF 2e9
+using namespace std;
+typedef pair<int, int> pii;
+typedef pair<int, pair<int, int>> piii;
+typedef vector<pii> vii;
+typedef vector<vector<int>> vvi;
+typedef vector<piii> viii;
+
+int dx[4] = {-1, 0, 1, 0};
+int dy[4] = { 0, -1, 0, 1 };
+int N, M;
+bool isOkay(vvi &map, int x, int y) {
+	if (x < 0 || x > M - 1 || y < 0 || y > N - 1)
+		return false;
+	if (map[x][y] == INF)
+		return false;
+	return true;
+}
+int dijkstra(vvi &map) {
+	priority_queue<piii, viii, greater<piii>> pq;
+	pq.push(make_pair(0, make_pair(0, 0))); // w, x, y
+	int cur_X, cur_Y, cur_Wall, new_X, new_Y, min_Wall = (int)INF;
+	while (!pq.empty()) {
+		cur_X = pq.top().second.first;
+		cur_Y = pq.top().second.second;
+		cur_Wall = pq.top().first;
+		if (cur_X == M - 1 && cur_Y == N - 1)
+			return cur_Wall;
+		map[cur_X][cur_Y] = INF;
+		pq.pop();
+		for (int i = 0; i < 4; i++) {
+			new_X = cur_X + dx[i];
+			new_Y = cur_Y + dy[i];
+			if (isOkay(map, new_X, new_Y)) {
+				pq.push(make_pair(cur_Wall + map[new_X][new_Y], make_pair(new_X, new_Y)));
+				map[new_X][new_Y] = INF;
+			}
+		}
+	}
+}
+int main() {
+	int i, j;
+	string input;
+	cin >> N >> M;
+	vvi map(M);
+	for (i = 0; i < M; i++) {
+		cin >> input;
+		for (j = 0; j < N; j++) {
+			map[i].push_back(input[j] - '0');
+		}
+	}
+	printf("%d\n", dijkstra(map));
+	return 0;
+}
