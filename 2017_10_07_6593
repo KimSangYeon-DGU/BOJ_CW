@@ -1,0 +1,96 @@
+/*
+다익스트라 알고리즘
+*/
+#include <cstdio>
+#include <queue>
+#include <functional>
+#include <algorithm>
+#include <cstring>
+#define MAX_S 31
+using namespace std;
+typedef pair<int, int> pii;
+typedef pair<int, pair<int, pair<int, int>>> piiii;
+typedef vector<pii> vii;
+typedef vector<piiii> viiii;
+typedef vector<vector<pii>> vvii;
+
+char map[MAX_S][MAX_S][MAX_S];
+bool visited[MAX_S][MAX_S][MAX_S];
+int dx[6] = { -1, 0, 1, 0, 0, 0 }; //앞 왼쪽 뒤 오른쪽 위 아래
+int dy[6] = { 0, -1, 0, 1, 0, 0 };
+int dz[6] = { 0, 0, 0, 0, 1, -1 };
+bool isOkay(int x, int y, int z, int L, int R, int C) {
+	if (x < 0 || x > R - 1 || y < 0 || y > C - 1 || z <0 || z > L - 1)
+		return false;
+	if (map[z][x][y] == '#' || visited[z][x][y] == true)
+		return false;
+	return true;
+}
+int dijkstra(int z, int x, int y, int L, int R, int C) {
+	priority_queue<piiii, viiii, greater<piiii>> pq;
+	pq.push(make_pair(0, make_pair(z, make_pair(x, y))));
+	int cur_X, cur_Y, cur_Z, new_X, new_Y, new_Z, i, cur_Weight;
+	visited[z][x][y] = true;
+	while (!pq.empty()) {
+		cur_X = pq.top().second.second.first;
+		cur_Y = pq.top().second.second.second;
+		cur_Z = pq.top().second.first;
+		cur_Weight = pq.top().first;
+		pq.pop();
+		if (map[cur_Z][cur_X][cur_Y] == 'E')
+			return cur_Weight;
+		for (i = 0; i < 6; i++) {
+			new_X = cur_X + dx[i];
+			new_Y = cur_Y + dy[i];
+			new_Z = cur_Z + dz[i];
+			if (isOkay(new_X, new_Y, new_Z, L, R, C)) {
+				pq.push(make_pair(cur_Weight + 1, make_pair(new_Z, make_pair(new_X, new_Y))));
+				visited[new_Z][new_X][new_Y] = true;
+			}
+		}
+	}
+	return 0;
+}
+
+int find_StartPoint(int L, int R, int C) {
+	int i, j, k, ans;
+	for (i = 0; i < L; i++) {
+		for (j = 0; j < R; j++) {
+			for (k = 0; k < C; k++) {
+				if (map[i][j][k] == 'S') {
+					ans = dijkstra(i, j, k, L, R, C);
+					return ans;
+				}
+			}
+		}
+	}
+}
+
+int main() {
+	int L, R, C, i, j, k;
+	int l, r, c;
+	while (true) {
+		int ans = 0;
+		memset(visited, false, sizeof(visited));
+		memset(map, '#', sizeof(map));
+		scanf("%d %d %d", &L, &R, &C);
+		if (L == 0 && R == 0 && C == 0)
+			break;
+		getchar();
+		for (i = 0; i < L; i++) {
+			for (j = 0; j < R; j++) {
+				for (k = 0; k < C; k++) {
+					scanf("%c", &map[i][j][k]);
+				}
+				getchar();
+			}
+			getchar();
+		}
+		ans = find_StartPoint(L, R, C);
+		if (ans == 0)
+			printf("Trapped!\n");
+		else
+			printf("Escaped in %d minute(s).\n", ans);
+	}
+	return 0;
+}
