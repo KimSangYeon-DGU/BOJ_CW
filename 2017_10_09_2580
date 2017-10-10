@@ -1,0 +1,111 @@
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
+#include <vector>
+#define SIDE 9
+using namespace std;
+typedef pair<int, int> pii;
+typedef vector<pii> vii;
+bool backtrack(int index, int size);
+void input_Data();
+void print_Sudoku();
+bool check_Row(int r, int n);
+bool check_Column(int c, int n);
+bool check_Rectangle(int r, int c, int n);
+bool isOkay(int r, int c, int n);
+
+int sudoku[SIDE][SIDE];
+vii v;
+
+void input_Data() {
+	int i, j;
+	for (i = 0; i < SIDE; i++) {
+		for (j = 0; j < SIDE; j++) {
+			scanf("%d", &sudoku[i][j]);
+		}
+	}
+}
+
+void print_Sudoku() {
+	int i, j;
+	for (i = 0; i < SIDE; i++) {
+		for (j = 0; j < SIDE; j++) {
+			printf("%d ", sudoku[i][j]);
+		}
+		printf("\n");
+	}
+}
+
+bool check_Row(int r, int n) {
+	int i;
+	for (i = 0; i < SIDE; i++) {
+		if (sudoku[r][i] == n)
+			return false;
+	}
+	return true;
+}
+
+bool check_Column(int c, int n) {
+	int i;
+	for (i = 0; i < SIDE; i++) {
+		if (sudoku[i][c] == n)
+			return false;
+	}
+	return true;
+}
+
+bool check_Rectangle(int r, int c, int n) {
+	int x, y, i, j;
+	x = r / 3 * 3;
+	y = c / 3 * 3;
+	for (i = x; i < x + 3; i++) {
+		for (j = y; j < y + 3; j++) {
+			if (sudoku[i][j] == n)
+				return false;
+		}
+	}
+	return true;
+}
+
+bool isOkay(int r, int c, int n) {
+	if (check_Row(r, n) && check_Column(c, n) && check_Rectangle(r, c, n))
+		return true;
+	return false;
+}
+bool backtrack(int index, int size) {
+	int i;
+	int row, col;
+	if (index > size - 1) {
+		print_Sudoku();
+		return true;
+	}
+	row = v[index].first;
+	col = v[index].second;
+	
+	for (i = 1; i <= SIDE; i++) {
+		if (isOkay(row, col, i)) {
+			sudoku[row][col] = i;
+			if (!backtrack(index + 1, size))
+				sudoku[row][col] = 0;
+			else
+				return true;
+		}
+	}
+	return false;
+}
+void find_Blank() {
+	int i, j;
+	for (i = 0; i < SIDE; i++) {
+		for (j = 0; j < SIDE; j++) {
+			if (sudoku[i][j] == 0)
+				v.push_back(make_pair(i, j));
+		}
+	}
+}
+int main() {
+	input_Data();
+	find_Blank();
+	int size = v.size();
+	backtrack(0, size);
+	return 0;
+}
