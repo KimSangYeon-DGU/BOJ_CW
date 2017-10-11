@@ -1,0 +1,74 @@
+#include <cstdio>
+#include <algorithm>
+#define MAX_S 21
+using namespace std;
+
+int map[MAX_S][MAX_S];
+bool visited_RD[MAX_S];
+bool visited_LD[MAX_S];
+int N, max_Black, max_White;
+
+void black(int row, int col, int cnt) {
+	int rd, ld;
+	max_Black = max(max_Black, cnt);
+	if (col > N) {
+		if (++row > N)
+			return;
+
+		else if (row % 2 == 0)
+			col = 2;
+		else
+			col = 1;
+	}
+	rd = row + col;
+	ld = 10 + row - col;
+	if (!visited_RD[rd] && !visited_LD[ld] && map[row][col]) {
+		visited_RD[rd] = true;
+		visited_LD[ld] = true;
+		black(row, col + 2, cnt + 1);
+		visited_RD[rd] = false;
+		visited_LD[ld] = false;
+	}
+	black(row, col + 2, cnt);
+}
+
+void white(int row, int col, int cnt) {
+	int rd, ld;
+	max_White = max(max_White, cnt);
+	if (col > N) {
+		if (++row > N)
+			return;
+		else if (row % 2 == 0)
+			col = 1;
+		else
+			col = 2;
+	}
+	rd = row + col;
+	ld = 10 + row - col;
+	if (!visited_RD[rd] && !visited_LD[ld] && map[row][col]) {
+		visited_RD[rd] = true;
+		visited_LD[ld] = true;
+		white(row, col + 2, cnt + 1);
+		visited_RD[rd] = false;
+		visited_LD[ld] = false;
+	}
+	white(row, col + 2, cnt);
+}
+
+void input_Data() {
+	int i, j;
+	for (i = 1; i <= N; i++) {
+		for (j = 1; j <= N; j++) {
+			scanf("%d", &map[i][j]);
+		}
+	}
+}
+int main() {
+	int i, j;
+	scanf("%d", &N);
+	input_Data();
+	black(1, 1, 0);
+	white(1, 2, 0);
+	printf("%d\n", max_Black + max_White);
+	return 0;
+}
