@@ -1,0 +1,13 @@
+#include <cstdio>
+
+int main() {
+	int L, P, input;
+	scanf("%d %d", &L, &P);	
+	int standard = L*P;
+	for (int i = 0; i < 5; i++) {
+		scanf("%d", &input);
+		printf("%d ", input  - standard);
+	}
+	printf("\n");
+	return 0;
+}
